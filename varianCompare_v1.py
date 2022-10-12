@@ -195,11 +195,12 @@ selection2dose = [18, 19, 32, 39, 70, 15, 112, 35, 73, 4]
 selection2doseInfection = [262, 263, 257, 95]
 selection3dose = [120, 119, 32, 139, 70, 15, 112, 127, 103, 23]
 selection3doseInfection = [9, 14, 70, 255, 19, 174, 266, 261, 32, 118, 267]
-selection4dose = [121, 138, 259, 272, 23]
+selection4dose = [121, 138, 259, 272, 23, 143, 144, 62]
 selection3sinoInfection = [177, 256, 94, 265]
 
 # mask the Vaccine Infection History
 df.loc[(df['dataInfection'] == 0) &
+       (df['Participant'].isin(selection2dose)) &
        (df['Varian'] == 'WT RBD') &
        (df['Days from 2nd Jab'] >= 14) &
        (df['Days from 2nd Jab'] < 42) &
@@ -207,7 +208,7 @@ df.loc[(df['dataInfection'] == 0) &
        'Vaccine Infection History'] = '2 dose'
 
 df.loc[(df['dataInfection'] == 0) &
-       (df['varianTest'] == 1) &
+       #  (df['varianTest'] == 1) &
        (df['Participant'].isin(selection2dose)) &
        (df['Days from 2nd Jab'] >= 14) &
        (df['Days from 2nd Jab'] < 42) &
@@ -215,7 +216,7 @@ df.loc[(df['dataInfection'] == 0) &
        'Vaccine Infection History'] = '2 dose'
 
 df.loc[(df['dataInfection'] == 1) &
-       (df['varianTest'] == 1) &
+       #  (df['varianTest'] == 1) &
        (df['Participant'].isin(selection2doseInfection)) &
        (df['daysInfection'] >= 14) &
        (df['daysInfection'] < 42) &
@@ -223,6 +224,7 @@ df.loc[(df['dataInfection'] == 1) &
        'Vaccine Infection History'] = '2 dose + Infection'
 
 df.loc[(df['dataInfection'] == 0) &
+       (df['Participant'].isin(selection3dose)) &
        (df['Varian'] == 'WT RBD') &
        (df['Days from 1st Booster'] >= 14) &
        (df['Days from 1st Booster'] < 42) &
@@ -230,7 +232,7 @@ df.loc[(df['dataInfection'] == 0) &
        'Vaccine Infection History'] = '3 dose'
 
 df.loc[(df['dataInfection'] == 0) &
-       (df['varianTest'] == 1) &
+       #  (df['varianTest'] == 1) &
        (df['Participant'].isin(selection3dose)) &
        (df['Days from 1st Booster'] >= 14) &
        (df['Days from 1st Booster'] < 42) &
@@ -238,7 +240,7 @@ df.loc[(df['dataInfection'] == 0) &
        'Vaccine Infection History'] = '3 dose'
 
 df.loc[(df['dataInfection'] == 1) &
-       (df['varianTest'] == 1) &
+       #  (df['varianTest'] == 1) &
        (df['Participant'].isin(selection3doseInfection)) &
        (df['daysInfection'] >= 14) &
        (df['daysInfection'] < 42) &
@@ -246,7 +248,7 @@ df.loc[(df['dataInfection'] == 1) &
        'Vaccine Infection History'] = '3 dose + Infection'
 
 df.loc[(df['dataInfection'] == 0) &
-       (df['varianTest'] == 1) &
+       #  (df['varianTest'] == 1) &
        (df['Participant'].isin(selection4dose)) &
        (df['Days from 2nd Booster'] >= 14) &
        (df['Days from 2nd Booster'] < 42) &
@@ -255,7 +257,8 @@ df.loc[(df['dataInfection'] == 0) &
 
 # Rename the mask when it is mixVaccine
 df.loc[(df['vaccineCategory'] == 'mixVaccine') &
-       (df['varianTest'] == 1) &
+       #  (df['varianTest'] == 1) &
+       (df['dataInfection'] == 1) &
        (df['daysInfection'] >= 14) &
        (df['daysInfection'] < 42) &
        (df['Participant'].isin(selection3sinoInfection)),
