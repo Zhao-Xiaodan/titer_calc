@@ -164,8 +164,9 @@ def removeDataPointbyList_Xrange(pp_list, dataFrame, byColumn, Xrange):
 
 # ============ main ===============
 
-df = pd.read_excel('readTiterMaster_20092022.xlsx', header=0, engine='openpyxl')
+#  df = pd.read_excel('readTiterMaster_20092022.xlsx', header=0, engine='openpyxl')
 
+df = pd.read_csv('titerMaster.csv')
 # cap the max titer to be 25000
 df.loc[df['Titer']>25000, 'Titer'] = 25000
 
@@ -191,67 +192,86 @@ df.loc[(df['Days from 1st Booster'] >= 0) & \
 df.loc[df['Days from 2nd Booster'] >= 0, 'data2ndBooster'] = 1
 
 # Zhou Yu select participants
-selection2dose = [18, 19, 32, 39, 70, 15, 112, 35, 73, 4]
-selection2doseInfection = [262, 263, 257, 95]
-selection3dose = [120, 119, 32, 139, 70, 15, 112, 127, 103, 23]
+selection2dose = [18, 19, 32, 39, 70, 15, 117, 35, 73, 4]
+#  selection2dose = sorted(selection2dose)
+selection2doseInfection = [262, 263, 95]
+#  selection2doseInfection= sorted(selection2doseInfection)
+selection3dose = [120, 119, 32, 70, 15, 161, 127, 103, 23, 162]
+#  selection3dose = sorted(selection3dose)
 selection3doseInfection = [9, 14, 70, 255, 19, 174, 266, 261, 32, 118, 267]
-selection4dose = [121, 138, 259, 272, 23, 143, 144, 62]
+#  selection3doseInfection = sorted(selection3doseInfection)
+selection4dose = [121, 138, 259, 23, 143, 144, 62, 271]
+#  selection4dose = sorted(selection4dose)
 selection3sinoInfection = [177, 256, 94, 265]
+#  selection3sinoInfection = sorted(selection3sinoInfection)
+
+df_2dose = pd.DataFrame({'2dose':selection2dose})
+df_2doseInfe = pd.DataFrame({'2doseInfe':selection2doseInfection})
+df_3dose = pd.DataFrame({'3dose':selection3dose})
+df_3doseInfe = pd.DataFrame({'3doseInfe':selection3doseInfection})
+df_4dose = pd.DataFrame({'4dose':selection4dose})
+df_3sinoInfe = pd.DataFrame({'3sinoInfe':selection3sinoInfection})
+
+df_selection = pd.concat(
+    [df_2dose, df_2doseInfe, df_3dose, df_3doseInfe,
+           df_3sinoInfe, df_4dose], axis=1)
+for col in df_selection:
+    df_selection[col] = df_selection[col].sort_values(ignore_index=True)
 
 # mask the Vaccine Infection History
 df.loc[(df['dataInfection'] == 0) &
        (df['Participant'].isin(selection2dose)) &
        (df['Varian'] == 'WT RBD') &
-       (df['Days from 2nd Jab'] >= 14) &
-       (df['Days from 2nd Jab'] < 42) &
+       #  (df['Days from 2nd Jab'] >= 14) &
+       #  (df['Days from 2nd Jab'] < 42) &
        (df['fVaccinated'] == 1),
        'Vaccine Infection History'] = '2 dose'
 
 df.loc[(df['dataInfection'] == 0) &
        #  (df['varianTest'] == 1) &
        (df['Participant'].isin(selection2dose)) &
-       (df['Days from 2nd Jab'] >= 14) &
-       (df['Days from 2nd Jab'] < 42) &
+       #  (df['Days from 2nd Jab'] >= 14) &
+       #  (df['Days from 2nd Jab'] < 42) &
        (df['fVaccinated'] == 1),
        'Vaccine Infection History'] = '2 dose'
 
 df.loc[(df['dataInfection'] == 1) &
        #  (df['varianTest'] == 1) &
        (df['Participant'].isin(selection2doseInfection)) &
-       (df['daysInfection'] >= 14) &
-       (df['daysInfection'] < 42) &
+       #  (df['daysInfection'] >= 14) &
+       #  (df['daysInfection'] < 42) &
        (df['fVaccinated'] == 1),
        'Vaccine Infection History'] = '2 dose + Infection'
 
 df.loc[(df['dataInfection'] == 0) &
        (df['Participant'].isin(selection3dose)) &
        (df['Varian'] == 'WT RBD') &
-       (df['Days from 1st Booster'] >= 14) &
-       (df['Days from 1st Booster'] < 42) &
+       #  (df['Days from 1st Booster'] >= 14) &
+       #  (df['Days from 1st Booster'] < 42) &
        (df['data1stBooster'] == 1),
        'Vaccine Infection History'] = '3 dose'
 
 df.loc[(df['dataInfection'] == 0) &
        #  (df['varianTest'] == 1) &
        (df['Participant'].isin(selection3dose)) &
-       (df['Days from 1st Booster'] >= 14) &
-       (df['Days from 1st Booster'] < 42) &
+       #  (df['Days from 1st Booster'] >= 14) &
+       #  (df['Days from 1st Booster'] < 42) &
        (df['data1stBooster'] == 1),
        'Vaccine Infection History'] = '3 dose'
 
 df.loc[(df['dataInfection'] == 1) &
        #  (df['varianTest'] == 1) &
        (df['Participant'].isin(selection3doseInfection)) &
-       (df['daysInfection'] >= 14) &
-       (df['daysInfection'] < 42) &
+       #  (df['daysInfection'] >= 14) &
+       #  (df['daysInfection'] < 42) &
        (df['data1stBooster'] == 1),
        'Vaccine Infection History'] = '3 dose + Infection'
 
 df.loc[(df['dataInfection'] == 0) &
        #  (df['varianTest'] == 1) &
        (df['Participant'].isin(selection4dose)) &
-       (df['Days from 2nd Booster'] >= 14) &
-       (df['Days from 2nd Booster'] < 42) &
+       #  (df['Days from 2nd Booster'] >= 14) &
+       #  (df['Days from 2nd Booster'] < 42) &
        (df['data2ndBooster'] == 1),
        'Vaccine Infection History'] = '4 dose'
 
@@ -259,8 +279,8 @@ df.loc[(df['dataInfection'] == 0) &
 df.loc[(df['vaccineCategory'] == 'mixVaccine') &
        #  (df['varianTest'] == 1) &
        (df['dataInfection'] == 1) &
-       (df['daysInfection'] >= 14) &
-       (df['daysInfection'] < 42) &
+       #  (df['daysInfection'] >= 14) &
+       #  (df['daysInfection'] < 42) &
        (df['Participant'].isin(selection3sinoInfection)),
        'Vaccine Infection History'] = '3 sino + Infection'
 
@@ -281,7 +301,25 @@ df = df.sort_values(by=['Vaccine Infection History', 'Participant', 'Test Date',
 #  df = df.sort_values(by=['Vaccine Infection History', 'Titer', 'Test Date', 'Participant'])
 #  print(df.info(verbose=True))
 df.to_csv('Checking low titer_drop.csv')
-#  breakpoint()
+
+# checking plot data points with selections
+gb = df.groupby(['Vaccine Infection History', 'Participant'])[[
+    'Vaccine Infection History', 'Participant']].apply(
+    lambda x: x.iloc[-1]).reset_index(drop=True)
+
+gb_t = gb.pivot(columns='Vaccine Infection History',
+                values='Participant')
+
+for col_plot, col_selection in zip(gb_t, df_selection):
+    ls_plot = gb_t[col_plot].dropna().values
+    ls_selection = df_selection[col_selection].dropna().values
+    #  print(ls_plot)
+    #  print(ls_selection)
+    ls_temp = [x for x in ls_selection if x not in ls_plot]
+    if len(ls_temp) > 0:
+        print(f"{col_plot}: {ls_temp}")
+    #  [print(x in gb_t[col_plot]) for x in df_selection[col_selection]]
+
 # --------- plot ----------
 order = ['2 dose', '2 dose + Infection', '3 dose', '3 dose + Infection', '4 dose', '3 sino + Infection']
 hue_order = ['WT RBD', 'BA1/2 RBD', 'BA4/5 RBD']
@@ -291,9 +329,9 @@ ax = sns.boxplot(data=df, x="Vaccine Infection History", y="Titer",
                  hue="Varian", order=order, hue_order=hue_order)
 for patch in ax.artists:
     fc = patch.get_facecolor()
-    patch.set_facecolor(mpl.colors.to_rgba(fc, 0.8))
+    patch.set_facecolor(mpl.colors.to_rgba(fc, 0.4))
 sns.stripplot(data=df, x="Vaccine Infection History", y="Titer",
-              hue="Varian", order=order, hue_order=hue_order, dodge=True)
+              hue="Varian", order=order, hue_order=hue_order, dodge=True, ax=ax)
 #
 # --------barplot- ----------------
 #  ax = sns.barplot(data=df, x="Vaccine Infection History", y="Titer",
@@ -311,4 +349,4 @@ l = plt.legend(handles[0:4], labels[0:3])
 #  plt.ylim(-1000, 2*10e4)
 plt.yscale('log')
 plt.show()
-#  breakpoint()
+breakpoint()
