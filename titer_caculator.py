@@ -413,7 +413,7 @@ for i in range(noOfRawFiles):
                             int(usefulInfo["Age"].values[0]),
                             usefulInfo["Gender"].values[0],
                             usefulInfo["Race"].values[0],
-                            f"fileNo{i}",
+                            i,
                         ]
                         titerMaster.append(titer_slice)
 titerMaster_df = pd.DataFrame(
@@ -448,31 +448,31 @@ pd.DataFrame(data).to_csv(
     index=False,
     header=["participant", "+", "-", "half maximum"] + data_tag.tolist(),
 )
-titerMaster_df.to_csv(
-    "titerMaster.csv",
-    sep="\t",
-    index=False,
-    header=[
-        "Test Date",
-        "Participant",
-        "Varian",
-        "Titer",
-        "CR3022 EC50",
-        "Saliva x5",
-        "Saliva X20",
-        "vaccineCategory",
-        "vaccineCurrent",
-        "daysInfection",
-        "Days from 2nd Jab",
-        "Days from 1st Booster",
-        "Days from 2nd Booster",
-        "boostNum",
-        "Age",
-        "Gender",
-        "Race",
-        "File Number",
-    ],
-)
-
+#  titerMaster_df.to_csv(
+    #  "titerMaster.csv",
+    #  sep="\t",
+    #  index=False,
+    #  header=[
+        #  "Test Date",
+        #  "Participant",
+        #  "Varian",
+        #  "Titer",
+        #  "CR3022 EC50",
+        #  "Saliva x5",
+        #  "Saliva X20",
+        #  "vaccineCategory",
+        #  "vaccineCurrent",
+        #  "daysInfection",
+        #  "Days from 2nd Jab",
+        #  "Days from 1st Booster",
+        #  "Days from 2nd Booster",
+        #  "boostNum",
+        #  "Age",
+        #  "Gender",
+        #  "Race",
+        #  "File Number",
+    #  ],
+#  )
+titerMaster_df.to_csv("titerMaster.csv", index=False)
 print("done")
 #####End of loading the useful info
