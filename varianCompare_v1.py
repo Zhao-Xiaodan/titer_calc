@@ -204,85 +204,91 @@ df.loc[(df['Days from 1st Booster'] >= 0) & \
 # mask 2nd Booster
 df.loc[df['Days from 2nd Booster'] >= 0, 'data2ndBooster'] = 1
 
-# Zhou Yu select participants
-selection2dose = [18, 19, 32, 39, 70, 15, 117, 35, 73, 4]
-#  selection2dose = sorted(selection2dose)
-selection2doseInfection = [262, 263, 95]
-#  selection2doseInfection= sorted(selection2doseInfection)
-selection3dose = [120, 119, 32, 70, 15, 161, 127, 103, 23, 162]
-#  selection3dose = sorted(selection3dose)
-selection3doseInfection = [9, 14, 70, 255, 19, 174, 266, 261, 32, 118, 267]
-#  selection3doseInfection = sorted(selection3doseInfection)
-selection4dose = [121, 138, 259, 23, 143, 144, 271, 62]
-#  selection4dose = sorted(selection4dose)
-selection3sinoInfection = [177, 256, 94, 265]
-#  selection3sinoInfection = sorted(selection3sinoInfection)
+# selection date and participants paired condition
+#  df['Participant'] = df['Participant'].astype(str)
+#  df['Participant'] = df['Participant'].apply(str)
+#  df['Test Date'] = df['Test Date'].apply(str)
+sel_ls = [
+    (18, '2021-08-27'), (19, '2021-08-13'), (32, '2021-08-05'),
+    (39, '2021-08-04'), (70, '2021-08-16'), (15, '2021-09-09'),
+    (117, '2021-08-24'), (35, '2021-09-07'), (73, '2021-08-20'),
+    (4, '2021-07-27'),
 
-df_2dose = pd.DataFrame({'2dose':selection2dose})
-df_2doseInfe = pd.DataFrame({'2doseInfe':selection2doseInfection})
-df_3dose = pd.DataFrame({'3dose':selection3dose})
-df_3doseInfe = pd.DataFrame({'3doseInfe':selection3doseInfection})
-df_4dose = pd.DataFrame({'4dose':selection4dose})
-df_3sinoInfe = pd.DataFrame({'3sinoInfe':selection3sinoInfection})
+    (262, '2022-08-03'), (263, '2022-08-03'), (95, '2022-03-09'),
 
-df_selection = pd.concat(
-    [df_2dose, df_2doseInfe, df_3dose, df_3doseInfe,
-           df_3sinoInfe, df_4dose], axis=1)
-for col in df_selection:
-    df_selection[col] = df_selection[col].sort_values(ignore_index=True)
+    (120, '2021-11-10'), (119, '2021-12-22'), (32, '2021-11-29'),
+    (139, '2021-10-13'), (70, '2021-11-24'), (15, '2022-02-23'),
+    (161, '2021-11-10'), (127, '2021-11-18'), (103, '2021-11-29'),
+    (23, '2021-11-08'), (162, '2021-11-10'),
+
+    (9, '2022-08-03'), (14, '2022-08-03'),
+    (19, '2022-08-05'), (174, '2022-06-22'), (266, '2022-08-04'),
+    (261, '2022-08-05'), (32, '2022-08-04'), (118, '2022-08-04'),
+    (267, '2022-08-05'),
+
+    (121, '2022-07-12'), (138, '2022-06-07'), (259, '2022-08-12'),
+    (23, '2022-09-27'), (271, '2022-09-23'),
+    (143, '2022-09-19'), (144, '2022-09-19'),
+
+    (177, '2022-05-09'), (94, '2022-04-06'), (265, '2022-08-04')
+
+
+
+]
+df = df.set_index(['Participant', 'Test Date']).loc[sel_ls].reset_index()
+#  # Zhou Yu select participants
+#  selection2dose = [18, 19, 32, 39, 70, 15, 117, 35, 73, 4]
+#  #  selection2dose = sorted(selection2dose)
+#  selection2doseInfection = [262, 263, 95]
+#  #  selection2doseInfection= sorted(selection2doseInfection)
+#  selection3dose = [120, 119, 32, 70, 15, 161, 127, 103, 23, 162]
+#  #  selection3dose = sorted(selection3dose)
+#  selection3doseInfection = [9, 14, 70, 255, 19, 174, 266, 261, 32, 118, 267]
+#  #  selection3doseInfection = sorted(selection3doseInfection)
+#  selection4dose = [121, 138, 259, 23, 143, 144, 271, 62]
+#  #  selection4dose = sorted(selection4dose)
+#  selection3sinoInfection = [177, 256, 94, 265]
+#  #  selection3sinoInfection = sorted(selection3sinoInfection)
+#
+#  df_2dose = pd.DataFrame({'2dose':selection2dose})
+#  df_2doseInfe = pd.DataFrame({'2doseInfe':selection2doseInfection})
+#  df_3dose = pd.DataFrame({'3dose':selection3dose})
+#  df_3doseInfe = pd.DataFrame({'3doseInfe':selection3doseInfection})
+#  df_4dose = pd.DataFrame({'4dose':selection4dose})
+#  df_3sinoInfe = pd.DataFrame({'3sinoInfe':selection3sinoInfection})
+
+#  df_selection = pd.concat(
+    #  [df_2dose, df_2doseInfe, df_3dose, df_3doseInfe,
+           #  df_3sinoInfe, df_4dose], axis=1)
+#  for col in df_selection:
+    #  df_selection[col] = df_selection[col].sort_values(ignore_index=True)
 
 # mask the Vaccine Infection History
 df.loc[(df['dataInfection'] == 0) &
-       (df['Participant'].isin(selection2dose)) &
-       (df['Varian'] == 'WT RBD') &
-       #  (df['Days from 2nd Jab'] >= 14) &
-       #  (df['Days from 2nd Jab'] < 42) &
-       (df['fVaccinated'] == 1),
-       'Vaccine Infection History'] = '2 dose'
-
-df.loc[(df['dataInfection'] == 0) &
-       #  (df['varianTest'] == 1) &
-       (df['Participant'].isin(selection2dose)) &
        #  (df['Days from 2nd Jab'] >= 14) &
        #  (df['Days from 2nd Jab'] < 42) &
        (df['fVaccinated'] == 1),
        'Vaccine Infection History'] = '2 dose'
 
 df.loc[(df['dataInfection'] == 1) &
-       #  (df['varianTest'] == 1) &
-       (df['Participant'].isin(selection2doseInfection)) &
        #  (df['daysInfection'] >= 14) &
        #  (df['daysInfection'] < 42) &
        (df['fVaccinated'] == 1),
        'Vaccine Infection History'] = '2 dose + Infection'
 
 df.loc[(df['dataInfection'] == 0) &
-       (df['Participant'].isin(selection3dose)) &
-       (df['Varian'] == 'WT RBD') &
-       #  (df['Days from 1st Booster'] >= 14) &
-       #  (df['Days from 1st Booster'] < 42) &
-       (df['data1stBooster'] == 1),
-       'Vaccine Infection History'] = '3 dose'
-
-df.loc[(df['dataInfection'] == 0) &
-       #  (df['varianTest'] == 1) &
-       (df['Participant'].isin(selection3dose)) &
        #  (df['Days from 1st Booster'] >= 14) &
        #  (df['Days from 1st Booster'] < 42) &
        (df['data1stBooster'] == 1),
        'Vaccine Infection History'] = '3 dose'
 
 df.loc[(df['dataInfection'] == 1) &
-       #  (df['varianTest'] == 1) &
-       (df['Participant'].isin(selection3doseInfection)) &
        #  (df['daysInfection'] >= 14) &
        #  (df['daysInfection'] < 42) &
        (df['data1stBooster'] == 1),
        'Vaccine Infection History'] = '3 dose + Infection'
 
 df.loc[(df['dataInfection'] == 0) &
-       #  (df['varianTest'] == 1) &
-       (df['Participant'].isin(selection4dose)) &
        #  (df['Days from 2nd Booster'] >= 14) &
        #  (df['Days from 2nd Booster'] < 42) &
        (df['data2ndBooster'] == 1),
@@ -290,56 +296,52 @@ df.loc[(df['dataInfection'] == 0) &
 
 # Rename the mask when it is mixVaccine
 df.loc[(df['vaccineCategory'] == 'mixVaccine') &
-       #  (df['varianTest'] == 1) &
-       (df['dataInfection'] == 1) &
+       (df['dataInfection'] == 1),
        #  (df['daysInfection'] >= 14) &
        #  (df['daysInfection'] < 42) &
-       (df['Participant'].isin(selection3sinoInfection)),
+       #  (df['D_P paired'].isin(D_P_ls)),
        'Vaccine Infection History'] = '3 sino + Infection'
 
 col = df.pop('Vaccine Infection History')
 df.insert(4, col.name, col)
-#  df.sort_values(by=['Vaccine Infection History'])
-#  df = df.sort_values(by=['Vaccine Infection History', 'Titer', 'Test Date', 'Participant'])
-#  df = df.sort_values(by=['Vaccine Infection History', 'Test Date', 'Participant'])
-#  df = df.sort_values(by=['Vaccine Infection History', 'Participant', 'Test Date', 'Titer'])
 
-#
-#  breakpoint()
-
-#  print(df.info(verbose=True))
-#  df.to_csv('Checking low titer.csv')
-#  gb = df.groupby(['Participant', 'Test Date', 'Varian'])['File Number']
-
-df = df.groupby(['Participant', 'Vaccine Infection History', 'Varian']).apply(
-    lambda x: x.iloc[-1]) .reset_index(drop=True)
-
-df = df.sort_values(by=['Vaccine Infection History', 'Participant', 'Test Date', 'Varian'])
+df.to_csv('Checking low titer_drop_before.csv')
+# to check whether required exp data have completed
+#  df = df.sort_values(by=['Vaccine Infection History', 'Participant',
+                        #  'Test Date', 'Varian', 'Titer'])
 df['Varian'] = pd.Categorical(df['Varian'], ["WT RBD", "BA1/2 RBD", "BA4/5 RBD"])
-#  df = df.sort_values(by=['Vaccine Infection History', 'Titer', 'Test Date', 'Participant'])
-#  print(df.info(verbose=True))
+df = df.sort_values(by=['Vaccine Infection History', 'Participant',
+                        'Test Date', 'Varian', 'File Number'])
+# sort with 'Titer' before select the last element to choose the Highest titer 
+#  df = df.groupby(['Participant', 'Vaccine Infection History', 'Varian']).apply(
+    #  lambda x: x.iloc[-1]) .reset_index(drop=True)
+df = df.groupby(['Participant', 'Vaccine Infection History', 'Varian']).tail(1).reset_index(drop=True)
+
+df['Freq_count'] = df.groupby(['Participant', 'Test Date'])['Participant'].transform('count')
 df.to_csv('Checking low titer_drop.csv')
-
-# checking plot data points with selections
-gb = df.groupby(['Vaccine Infection History', 'Participant'])[[
-    'Vaccine Infection History', 'Participant']].apply(
-    lambda x: x.iloc[-1]).reset_index(drop=True)
-
-gb_t = gb.pivot(columns='Vaccine Infection History',
-                values='Participant')
-
-for col_plot, col_selection in zip(gb_t, df_selection):
-    ls_plot = gb_t[col_plot].dropna().values
-    ls_selection = df_selection[col_selection].dropna().values
-    #  print(ls_plot)
-    #  print(ls_selection)
-    ls_temp = [x for x in ls_selection if x not in ls_plot]
-    if len(ls_temp) > 0:
-        print(f"{col_plot}: {ls_temp}")
-    #  [print(x in gb_t[col_plot]) for x in df_selection[col_selection]]
+breakpoint()
+#
+#  # checking plot data points with selections
+#  gb = df.groupby(['Vaccine Infection History', 'Participant'])[[
+#      'Vaccine Infection History', 'Participant']].apply(
+#      lambda x: x.iloc[-1]).reset_index(drop=True)
+#
+#  gb_t = gb.pivot(columns='Vaccine Infection History',
+#                  values='Participant')
+#
+#  for col_plot, col_selection in zip(gb_t, df_selection):
+#      ls_plot = gb_t[col_plot].dropna().values
+#      ls_selection = df_selection[col_selection].dropna().values
+#      #  print(ls_plot)
+#      #  print(ls_selection)
+#      ls_temp = [x for x in ls_selection if x not in ls_plot]
+#      if len(ls_temp) > 0:
+#          print(f"{col_plot}: {ls_temp}")
+#      #  [print(x in gb_t[col_plot]) for x in df_selection[col_selection]]
 
 # -------- boxplot ----------
-if False:
+if True:
+#  if False:
     order = ['2 dose', '2 dose + Infection', '3 dose', '3 dose + Infection', '4 dose', '3 sino + Infection']
     hue_order = ['WT RBD', 'BA1/2 RBD', 'BA4/5 RBD']
     #  sns.set_theme(style='white')
@@ -406,6 +408,7 @@ if False:
     plt.show()
 
 # -------- ttest and p-value for non-Infection --------
+#  if True:
 if False:
     dose_Ls = ['2 dose', '3 dose', '4 dose']
     varian_Ls = ['BA1/2 RBD', 'BA4/5 RBD']
@@ -461,8 +464,9 @@ if False:
         loc="outside",
     )
 
-    handles, labels = ax.get_legend_handles_labels()
-    l = plt.legend(handles[0:3], labels[0:3])
+    #  handles, labels = ax.get_legend_handles_labels()
+    #  l = plt.legend(handles[0:3], labels[0:3])
+    plt.legend([],[], frameon=False)
     plt.subplots_adjust(left=0.15, right=0.9, top=0.6, bottom=0.1)
     plt.savefig("dose_comapre2.png")
     #  fig.patch.set_visible(False)
@@ -473,8 +477,9 @@ if False:
     ax.spines['left'].set_visible(False)
     plt.show()
 
-# -------- ttest and p-value for non-Infection --------
-if True:
+# -------- ttest and p-value for Infection --------
+if False:
+#  if True:
     dose_Ls = ['2 dose', '3 dose', '4 dose']
     varian_Ls = ['BA1/2 RBD', 'BA4/5 RBD']
 
@@ -529,8 +534,9 @@ if True:
         loc="outside",
     )
 
-    handles, labels = ax.get_legend_handles_labels()
-    l = plt.legend(handles[0:3], labels[0:3])
+    #  handles, labels = ax.get_legend_handles_labels()
+    #  l = plt.legend(handles[0:3], labels[0:3])
+    plt.legend([],[], frameon=False)
     plt.subplots_adjust(left=0.15, right=0.9, top=0.6, bottom=0.1)
     plt.savefig("dose_comapre2.png")
     #  fig.patch.set_visible(False)
@@ -539,7 +545,247 @@ if True:
     ax.spines['right'].set_visible(False)
     #  ax.spines['bottom'].set_visible(False)
     ax.spines['left'].set_visible(False)
-    plt.yscale('log')
+    plt.show()
+
+# -------- ttest and p-value for each withingroup Infection--------
+if False:
+#  if True:
+    dose_Ls = ['2 dose', '3 dose', '4 dose']
+    varian_Ls = ['BA1/2 RBD', 'BA4/5 RBD']
+
+    pvalue_dose = []
+    for dose_l in dose_Ls:
+        stat, pvalue = scipy.stats.ttest_ind(
+            (df.loc[(df['Vaccine Infection History'] == dose_l) &
+                    (df['Varian'] == 'BA1/2 RBD')]['Titer']
+             ),
+            (df.loc[(df['Vaccine Infection History'] == dose_l) &
+                    (df['Varian'] == 'BA4/5 RBD')]['Titer']
+             )
+        )
+        pvalue_dose.append(pvalue)
+        print(pvalue_dose)
+    #
+    sns.set_theme(style='white')
+    fig, ax = plt.subplots()
+
+    #  sns.set_theme(style='darkgrid')
+    order = ['2 dose + Infection', '3 dose + Infection', '3 sino + Infection']
+    hue_order = ['WT RBD', 'BA1/2 RBD', 'BA4/5 RBD']
+
+    ax = sns.boxplot(data=df, x="Vaccine Infection History", y="Titer",
+                     hue="Varian", order=order, hue_order=hue_order)
+    for patch in ax.artists:
+        fc = patch.get_facecolor()
+        patch.set_facecolor(mpl.colors.to_rgba(fc, 0.4))
+    sns.stripplot(data=df, x="Vaccine Infection History", y="Titer",
+                  hue="Varian", order=order, hue_order=hue_order, dodge=True, ax=ax)
+
+    statannot.add_stat_annotation(
+        ax,
+        data=df,
+        x="Vaccine Infection History",
+        y="Titer",
+        hue="Varian",
+        order=order,
+        box_pairs=[
+            (("2 dose + Infection", "WT RBD"), ("2 dose + Infection", "BA1/2 RBD")),
+            (("2 dose + Infection", "WT RBD"), ("2 dose + Infection", "BA4/5 RBD")),
+            (("2 dose + Infection", "BA1/2 RBD"), ("2 dose + Infection", "BA4/5 RBD")),
+            (("3 dose + Infection", "WT RBD"), ("3 dose + Infection", "BA1/2 RBD")),
+            (("3 dose + Infection", "WT RBD"), ("3 dose + Infection", "BA4/5 RBD")),
+            (("3 dose + Infection", "BA1/2 RBD"), ("3 dose + Infection", "BA4/5 RBD")),
+            (("3 sino + Infection", "WT RBD"), ("3 sino + Infection", "BA1/2 RBD")),
+            (("3 sino + Infection", "WT RBD"), ("3 sino + Infection", "BA4/5 RBD")),
+            (("3 sino + Infection", "BA1/2 RBD"), ("3 sino + Infection", "BA4/5 RBD")),
+        ],
+        #  test="Wilcoxon",
+        test="t-test_ind",
+        text_format="star",
+        loc="outside",
+    )
+
+    #  handles, labels = ax.get_legend_handles_labels()
+    #  l = plt.legend(handles[0:3], labels[0:3])
+    plt.legend([],[], frameon=False)
+    plt.subplots_adjust(left=0.15, right=0.9, top=0.6, bottom=0.1)
+    plt.savefig("dose_comapre2.png")
+    #  fig.patch.set_visible(False)
+    #  ax.axis('off')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    #  ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    plt.show()
+
+# -------- ttest and p-value for non-Infection withinGroup--------
+#  if True:
+if False:
+    sns.set_theme(style='white')
+    fig, ax = plt.subplots()
+
+    order = ['2 dose', '3 dose', '4 dose']
+    hue_order = ['WT RBD', 'BA1/2 RBD', 'BA4/5 RBD']
+
+    ax = sns.boxplot(data=df, x="Vaccine Infection History", y="Titer",
+                     hue="Varian", order=order, hue_order=hue_order)
+    for patch in ax.artists:
+        fc = patch.get_facecolor()
+        patch.set_facecolor(mpl.colors.to_rgba(fc, 0.4))
+    sns.stripplot(data=df, x="Vaccine Infection History", y="Titer",
+                  hue="Varian", order=order, hue_order=hue_order, dodge=True, ax=ax)
+
+    statannot.add_stat_annotation(
+        ax,
+        data=df,
+        x="Vaccine Infection History",
+        y="Titer",
+        hue="Varian",
+        order=order,
+        box_pairs=[
+            (("2 dose", "WT RBD"), ("2 dose", "BA1/2 RBD")),
+            (("2 dose", "WT RBD"), ("2 dose", "BA4/5 RBD")),
+            (("2 dose", "BA1/2 RBD"), ("2 dose", "BA4/5 RBD")),
+            (("3 dose", "WT RBD"), ("3 dose", "BA1/2 RBD")),
+            (("3 dose", "WT RBD"), ("3 dose", "BA4/5 RBD")),
+            (("3 dose", "BA1/2 RBD"), ("3 dose", "BA4/5 RBD")),
+            (("4 dose", "WT RBD"), ("4 dose", "BA1/2 RBD")),
+            (("4 dose", "WT RBD"), ("4 dose", "BA4/5 RBD")),
+            (("4 dose", "BA1/2 RBD"), ("4 dose", "BA4/5 RBD")),
+        ],
+        #  test="Wilcoxon",
+        test="t-test_ind",
+        text_format="star",
+        loc="outside",
+    )
+
+    #  handles, labels = ax.get_legend_handles_labels()
+    #  l = plt.legend(handles[0:3], labels[0:3])
+    plt.legend([],[], frameon=False)
+    plt.subplots_adjust(left=0.15, right=0.9, top=0.6, bottom=0.1)
+    plt.savefig("dose_comapre2.png")
+    #  fig.patch.set_visible(False)
+    #  ax.axis('off')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    #  ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    plt.show()
+
+# -------- ttest and p-value for Infection and nonInfection--------
+if False:
+#  if True:
+    dose_Ls = ['2 dose', '3 dose', '4 dose']
+    varian_Ls = ['BA1/2 RBD', 'BA4/5 RBD']
+
+    pvalue_dose = []
+    for dose_l in dose_Ls:
+        stat, pvalue = scipy.stats.ttest_ind(
+            (df.loc[(df['Vaccine Infection History'] == dose_l) &
+                    (df['Varian'] == 'BA1/2 RBD')]['Titer']
+             ),
+            (df.loc[(df['Vaccine Infection History'] == dose_l) &
+                    (df['Varian'] == 'BA4/5 RBD')]['Titer']
+             )
+        )
+        pvalue_dose.append(pvalue)
+        print(pvalue_dose)
+    #
+    sns.set_theme(style='white')
+    fig, ax = plt.subplots()
+
+    #  sns.set_theme(style='darkgrid')
+    order = ['2 dose', '2 dose + Infection', '3 dose', '3 dose + Infection']
+    hue_order = ['WT RBD', 'BA1/2 RBD', 'BA4/5 RBD']
+
+    ax = sns.boxplot(data=df, x="Vaccine Infection History", y="Titer",
+                     hue="Varian", order=order, hue_order=hue_order)
+    for patch in ax.artists:
+        fc = patch.get_facecolor()
+        patch.set_facecolor(mpl.colors.to_rgba(fc, 0.4))
+    sns.stripplot(data=df, x="Vaccine Infection History", y="Titer",
+                  hue="Varian", order=order, hue_order=hue_order, dodge=True, ax=ax)
+
+    statannot.add_stat_annotation(
+        ax,
+        data=df,
+        x="Vaccine Infection History",
+        y="Titer",
+        hue="Varian",
+        order=order,
+        box_pairs=[
+            (("2 dose", "WT RBD"), ("2 dose + Infection", "WT RBD")),
+            (("3 dose", "WT RBD"), ("3 dose + Infection", "WT RBD")),
+            (("2 dose", "BA1/2 RBD"), ("2 dose + Infection", "BA1/2 RBD")),
+            (("3 dose", "BA1/2 RBD"), ("3 dose + Infection", "BA1/2 RBD")),
+            (("2 dose", "BA4/5 RBD"), ("2 dose + Infection", "BA4/5 RBD")),
+            (("3 dose", "BA4/5 RBD"), ("3 dose + Infection", "BA4/5 RBD")),
+        ],
+        test="t-test_ind",
+        text_format="star",
+        loc="outside",
+    )
+
+    #  handles, labels = ax.get_legend_handles_labels()
+    #  l = plt.legend(handles[0:3], labels[0:3])
+    plt.legend([],[], frameon=False)
+    plt.subplots_adjust(left=0.15, right=0.9, top=0.6, bottom=0.1)
+    plt.savefig("dose_comapre2.png")
+    #  fig.patch.set_visible(False)
+    #  ax.axis('off')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    #  ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+    plt.show()
+
+# -------- ttest and p-value for Infection and nonInfection--------
+if False:
+#  if True:
+    sns.set_theme(style='white')
+    fig, ax = plt.subplots()
+
+    #  sns.set_theme(style='darkgrid')
+    order = ['2 dose', '2 dose + Infection', '3 dose', '3 dose + Infection']
+    hue_order = ['WT RBD', 'BA1/2 RBD', 'BA4/5 RBD']
+
+    ax = sns.boxplot(data=df, x="Vaccine Infection History", y="Titer",
+                     hue="Varian", order=order, hue_order=hue_order)
+    for patch in ax.artists:
+        fc = patch.get_facecolor()
+        patch.set_facecolor(mpl.colors.to_rgba(fc, 0.4))
+    sns.stripplot(data=df, x="Vaccine Infection History", y="Titer",
+                  hue="Varian", order=order, hue_order=hue_order, dodge=True, ax=ax)
+
+    statannot.add_stat_annotation(
+        ax,
+        data=df,
+        x="Vaccine Infection History",
+        y="Titer",
+        hue="Varian",
+        order=order,
+        box_pairs=[
+            #  (("2 dose", "WT RBD"), ("2 dose + Infection", "WT RBD")),
+            (("2 dose", "WT RBD"), ("3 dose + Infection", "WT RBD")),
+            (("2 dose", "BA1/2 RBD"), ("3 dose + Infection", "BA1/2 RBD")),
+            (("2 dose", "BA4/5 RBD"), ("3 dose + Infection", "BA4/5 RBD")),
+        ],
+        test="t-test_ind",
+        text_format="star",
+        loc="outside",
+    )
+
+    #  handles, labels = ax.get_legend_handles_labels()
+    #  l = plt.legend(handles[0:3], labels[0:3])
+    plt.legend([],[], frameon=False)
+    plt.subplots_adjust(left=0.15, right=0.9, top=0.6, bottom=0.1)
+    plt.savefig("dose_comapre2.png")
+    #  fig.patch.set_visible(False)
+    #  ax.axis('off')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    #  ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
     plt.show()
 
 breakpoint()
