@@ -1,5 +1,8 @@
+from boxplot_Sep22 import *
 #  import os
 #  import pathlib
+from os import listdir, path
+from pathlib import Path
 #  from operator import itemgetter, attrgetter
 #  import datetime
 #
@@ -175,6 +178,70 @@ def removeDataPointbyList_Xrange(pp_list, dataFrame, byColumn, Xrange):
     dataFrame =  dataFrame.loc[~condition]
     return dataFrame
 
+def exportLowTiter(lowTiter):
+    # load raw files
+    rawData_ls = []  # file names of raw data in txt
+    infoData_ls = []  # file names of info in excel
+    basepath = Path(__file__).parent
+    basepath = basepath / "expData"
+
+    for i in listdir(basepath):
+        if i.endswith(".txt"):
+            rawData_ls.append(i)
+        elif i.endswith(".xlsx"):
+            infoData_ls.append(i)
+
+    # seems the sorting is by time, and it is reflected by file number
+    rawData_ls.sort()
+    infoData_ls.sort()
+
+    #  df = pd.read_csv('titerMaster.csv')
+    #  df = pd.read_excel('readTiterMaster_20092022.xlsx', header=0, engine='openpyxl')
+
+    #  breakpoint()
+    noOfRawFiles = len(rawData_ls)
+    for i in range(noOfRawFiles):
+        if i in lowTiter:
+            print(i)
+            vaccineHistory = df.loc[df['File Number'] == i][
+            ['Participant', 'Vaccine Infection History', 'Varian', 'Titer']].values
+            print(vaccineHistory)
+            vaccineHistory = [f"{x[0]}_{x[1]}_{x[2]}: {x[3]}" for x in vaccineHistory]
+            print(vaccineHistory)
+            vaccineHistory = np.array([vaccineHistory]).reshape(-1, 1)
+            print(vaccineHistory)
+            #  breakpoint()
+            fileName = infoData_ls[i].rstrip('.xlsx')
+            data = np.loadtxt(path.join(basepath, rawData_ls[i]))
+            title_list = pd.read_excel(
+                path.join(basepath, infoData_ls[i]), header=None, engine="openpyxl"
+            ).values.flatten()
+            color_list = [None] * len(title_list)
+            segment = [0, 4, 8, 12, 16]
+            color_list = colorGroup(color_list, segment)
+
+            plt.style.use('seaborn')
+            f=plt.figure()
+            medianprops = dict( color='#323232')
+            bp = plt.boxplot(data.transpose(),
+                             vert=True,
+                             patch_artist=True,
+                             labels=title_list,
+                             medianprops=medianprops
+            )
+            for patch, color in zip(bp['boxes'], color_list):
+                patch.set(facecolor=color, alpha=0.8)
+            plt.suptitle(f"{fileName}\n{vaccineHistory}")
+            plt.ylim([0, 300])
+            plt.ylabel('Bead number per 100 X 100 $\mu$$m^2$')
+            plt.xticks(rotation=45)
+            plt.xticks(fontsize = 8)
+            plt.yticks(fontsize = 12)
+            plt.subplots_adjust(left=0.15, right=0.9, top=0.8, bottom=0.4)
+            plt.savefig(f"{ Path(__file__).parent }/exportFig/"
+                        f"{fileName}.png", dpi=300)
+
+
 # ============ main ===============
 
 #  df = pd.read_excel('readTiterMaster_20092022.xlsx', header=0, engine='openpyxl')
@@ -236,32 +303,6 @@ sel_ls = [
 
 ]
 df = df.set_index(['Participant', 'Test Date']).loc[sel_ls].reset_index()
-#  # Zhou Yu select participants
-#  selection2dose = [18, 19, 32, 39, 70, 15, 117, 35, 73, 4]
-#  #  selection2dose = sorted(selection2dose)
-#  selection2doseInfection = [262, 263, 95]
-#  #  selection2doseInfection= sorted(selection2doseInfection)
-#  selection3dose = [120, 119, 32, 70, 15, 161, 127, 103, 23, 162]
-#  #  selection3dose = sorted(selection3dose)
-#  selection3doseInfection = [9, 14, 70, 255, 19, 174, 266, 261, 32, 118, 267]
-#  #  selection3doseInfection = sorted(selection3doseInfection)
-#  selection4dose = [121, 138, 259, 23, 143, 144, 271, 62]
-#  #  selection4dose = sorted(selection4dose)
-#  selection3sinoInfection = [177, 256, 94, 265]
-#  #  selection3sinoInfection = sorted(selection3sinoInfection)
-#
-#  df_2dose = pd.DataFrame({'2dose':selection2dose})
-#  df_2doseInfe = pd.DataFrame({'2doseInfe':selection2doseInfection})
-#  df_3dose = pd.DataFrame({'3dose':selection3dose})
-#  df_3doseInfe = pd.DataFrame({'3doseInfe':selection3doseInfection})
-#  df_4dose = pd.DataFrame({'4dose':selection4dose})
-#  df_3sinoInfe = pd.DataFrame({'3sinoInfe':selection3sinoInfection})
-
-#  df_selection = pd.concat(
-    #  [df_2dose, df_2doseInfe, df_3dose, df_3doseInfe,
-           #  df_3sinoInfe, df_4dose], axis=1)
-#  for col in df_selection:
-    #  df_selection[col] = df_selection[col].sort_values(ignore_index=True)
 
 # mask the Vaccine Infection History
 df.loc[(df['dataInfection'] == 0) &
@@ -319,7 +360,7 @@ df = df.groupby(['Participant', 'Vaccine Infection History', 'Varian']).tail(1).
 
 df['Freq_count'] = df.groupby(['Participant', 'Test Date'])['Participant'].transform('count')
 df.to_csv('Checking low titer_drop.csv')
-breakpoint()
+#  breakpoint()
 #
 #  # checking plot data points with selections
 #  gb = df.groupby(['Vaccine Infection History', 'Participant'])[[
@@ -340,8 +381,8 @@ breakpoint()
 #      #  [print(x in gb_t[col_plot]) for x in df_selection[col_selection]]
 
 # -------- boxplot ----------
-if True:
-#  if False:
+#  if True:
+if False:
     order = ['2 dose', '2 dose + Infection', '3 dose', '3 dose + Infection', '4 dose', '3 sino + Infection']
     hue_order = ['WT RBD', 'BA1/2 RBD', 'BA4/5 RBD']
     #  sns.set_theme(style='white')
@@ -663,7 +704,7 @@ if False:
     #  l = plt.legend(handles[0:3], labels[0:3])
     plt.legend([],[], frameon=False)
     plt.subplots_adjust(left=0.15, right=0.9, top=0.6, bottom=0.1)
-    plt.savefig("dose_comapre2.png")
+    #  plt.savefig("dose_comapre2.png")
     #  fig.patch.set_visible(False)
     #  ax.axis('off')
     ax.spines['top'].set_visible(False)
@@ -773,6 +814,7 @@ if False:
         test="t-test_ind",
         text_format="star",
         loc="outside",
+        verbose=2
     )
 
     #  handles, labels = ax.get_legend_handles_labels()
@@ -788,4 +830,9 @@ if False:
     ax.spines['left'].set_visible(False)
     plt.show()
 
+# ------ export lowTiter Figure  -------
+
+print(df)
+lowTiter = df.loc[df['Titer'] < 1000]['File Number'].values
+exportLowTiter(lowTiter)
 breakpoint()
