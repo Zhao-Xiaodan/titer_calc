@@ -18,6 +18,15 @@ import seaborn as sns
 import pandas as pd
 from scipy import interpolate
 
+"""
+Mann-Whitney
+t-test (independent and paired)
+Welch's t-test
+Levene test
+Wilcoxon test
+Kruskal-Wallis test
+"""
+
 def convert_pvalue_to_asterisks(pvalue):
     if pvalue <= 0.0001:
         return "****"
@@ -500,7 +509,8 @@ if False:
             (("2 dose", "BA4/5 RBD"), ("4 dose", "BA4/5 RBD")),
             (("3 dose", "BA4/5 RBD"), ("4 dose", "BA4/5 RBD")),
         ],
-        test="t-test_ind",
+        #  test="t-test_ind",
+        test="Mann-Whitney",
         text_format="star",
         loc="outside",
     )
@@ -541,7 +551,8 @@ if False:
     fig, ax = plt.subplots()
 
     #  sns.set_theme(style='darkgrid')
-    order = ['2 dose + Infection', '3 dose + Infection', '3 sino + Infection']
+    order = ['2 dose + Infection', '3 dose + Infection']
+    #  order = ['2 dose + Infection', '3 dose + Infection', '3 sino + Infection']
     hue_order = ['WT RBD', 'BA1/2 RBD', 'BA4/5 RBD']
 
     ax = sns.boxplot(data=df, x="Vaccine Infection History", y="Titer",
@@ -561,16 +572,16 @@ if False:
         order=order,
         box_pairs=[
             (("2 dose + Infection", "WT RBD"), ("3 dose + Infection", "WT RBD")),
-            (("2 dose + Infection", "WT RBD"), ("3 sino + Infection", "WT RBD")),
-            (("3 dose + Infection", "WT RBD"), ("3 sino + Infection", "WT RBD")),
+            #  (("2 dose + Infection", "WT RBD"), ("3 sino + Infection", "WT RBD")),
+            #  (("3 dose + Infection", "WT RBD"), ("3 sino + Infection", "WT RBD")),
             (("2 dose + Infection", "BA1/2 RBD"), ("3 dose + Infection", "BA1/2 RBD")),
-            (("2 dose + Infection", "BA1/2 RBD"), ("3 sino + Infection", "BA1/2 RBD")),
-            (("3 dose + Infection", "BA1/2 RBD"), ("3 sino + Infection", "BA1/2 RBD")),
+            #  (("2 dose + Infection", "BA1/2 RBD"), ("3 sino + Infection", "BA1/2 RBD")),
+            #  (("3 dose + Infection", "BA1/2 RBD"), ("3 sino + Infection", "BA1/2 RBD")),
             (("2 dose + Infection", "BA4/5 RBD"), ("3 dose + Infection", "BA4/5 RBD")),
-            (("2 dose + Infection", "BA4/5 RBD"), ("3 sino + Infection", "BA4/5 RBD")),
-            (("3 dose + Infection", "BA4/5 RBD"), ("3 sino + Infection", "BA4/5 RBD")),
+            #  (("2 dose + Infection", "BA4/5 RBD"), ("3 sino + Infection", "BA4/5 RBD")),
+            #  (("3 dose + Infection", "BA4/5 RBD"), ("3 sino + Infection", "BA4/5 RBD")),
         ],
-        test="t-test_ind",
+        test="Mann-Whitney",
         text_format="star",
         loc="outside",
     )
@@ -611,7 +622,8 @@ if False:
     fig, ax = plt.subplots()
 
     #  sns.set_theme(style='darkgrid')
-    order = ['2 dose + Infection', '3 dose + Infection', '3 sino + Infection']
+    order = ['2 dose + Infection', '3 dose + Infection']
+    #  order = ['2 dose + Infection', '3 dose + Infection', '3 sino + Infection']
     hue_order = ['WT RBD', 'BA1/2 RBD', 'BA4/5 RBD']
 
     ax = sns.boxplot(data=df, x="Vaccine Infection History", y="Titer",
@@ -636,12 +648,11 @@ if False:
             (("3 dose + Infection", "WT RBD"), ("3 dose + Infection", "BA1/2 RBD")),
             (("3 dose + Infection", "WT RBD"), ("3 dose + Infection", "BA4/5 RBD")),
             (("3 dose + Infection", "BA1/2 RBD"), ("3 dose + Infection", "BA4/5 RBD")),
-            (("3 sino + Infection", "WT RBD"), ("3 sino + Infection", "BA1/2 RBD")),
-            (("3 sino + Infection", "WT RBD"), ("3 sino + Infection", "BA4/5 RBD")),
-            (("3 sino + Infection", "BA1/2 RBD"), ("3 sino + Infection", "BA4/5 RBD")),
+            #  (("3 sino + Infection", "WT RBD"), ("3 sino + Infection", "BA1/2 RBD")),
+            #  (("3 sino + Infection", "WT RBD"), ("3 sino + Infection", "BA4/5 RBD")),
+            #  (("3 sino + Infection", "BA1/2 RBD"), ("3 sino + Infection", "BA4/5 RBD")),
         ],
-        #  test="Wilcoxon",
-        test="t-test_ind",
+        test="Wilcoxon",
         text_format="star",
         loc="outside",
     )
@@ -694,8 +705,9 @@ if False:
             (("4 dose", "WT RBD"), ("4 dose", "BA4/5 RBD")),
             (("4 dose", "BA1/2 RBD"), ("4 dose", "BA4/5 RBD")),
         ],
-        #  test="Wilcoxon",
-        test="t-test_ind",
+        test="Wilcoxon",
+        #  test="Mann-Whitney",
+        #  test="t-test_ind",
         text_format="star",
         loc="outside",
     )
@@ -762,7 +774,7 @@ if False:
             (("2 dose", "BA4/5 RBD"), ("2 dose + Infection", "BA4/5 RBD")),
             (("3 dose", "BA4/5 RBD"), ("3 dose + Infection", "BA4/5 RBD")),
         ],
-        test="t-test_ind",
+        test="Mann-Whitney",
         text_format="star",
         loc="outside",
     )
@@ -810,8 +822,11 @@ if False:
             (("2 dose", "WT RBD"), ("3 dose + Infection", "WT RBD")),
             (("2 dose", "BA1/2 RBD"), ("3 dose + Infection", "BA1/2 RBD")),
             (("2 dose", "BA4/5 RBD"), ("3 dose + Infection", "BA4/5 RBD")),
+            (("2 dose + Infection", "WT RBD"), ("3 dose + Infection", "WT RBD")),
+            (("2 dose + Infection", "BA1/2 RBD"), ("3 dose + Infection", "BA1/2 RBD")),
+            (("2 dose + Infection", "BA4/5 RBD"), ("3 dose + Infection", "BA4/5 RBD")),
         ],
-        test="t-test_ind",
+        test="Mann-Whitney",
         text_format="star",
         loc="outside",
         verbose=2
@@ -832,7 +847,7 @@ if False:
 
 # ------ export lowTiter Figure  -------
 
-print(df)
-lowTiter = df.loc[df['Titer'] < 1000]['File Number'].values
-exportLowTiter(lowTiter)
+#  print(df)
+#  lowTiter = df.loc[df['Titer'] < 1000]['File Number'].values
+#  exportLowTiter(lowTiter)
 breakpoint()
