@@ -850,4 +850,14 @@ if False:
 #  print(df)
 #  lowTiter = df.loc[df['Titer'] < 1000]['File Number'].values
 #  exportLowTiter(lowTiter)
+
+# ---- export to Prism uinsg melt -----
+selection_ls = ['2 dose', '3 dose', '4 dose',
+                '2 dose + Infection', '3 dose + Infection']
+df = df.loc[df['Vaccine Infection History'].isin(selection_ls)]
+df = df[['Participant', 'Varian', 'Vaccine Infection History', 'Titer']]
+df_wide = df.pivot(columns=['Vaccine Infection History', 'Varian'], values='Titer')
+df_wide = df_wide.apply(lambda x: pd.Series(x.dropna().values))
+#  df_wide.columns = ['_'.join(str(s).strip() for s in col if s) for col in df_wide.columns]
+df_wide.to_csv("export_Prism.csv")
 breakpoint()
