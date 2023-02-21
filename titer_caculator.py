@@ -17,7 +17,9 @@ pa = pd.read_excel(path.join(basepath, 'Participants.xlsx'),
                   engine='openpyxl',
                   )
 #  basepath = path.join(basepath, "expData")
-basepath = path.join(basepath, "expData_test")
+#  basepath = path.join(basepath, "expData_test")
+folderName = "expData_backup Nov23"
+basepath = path.join(basepath, folderName)
 #  basepath = path.join(basepath, "expData_backup Nov23")
 #basepath = basepath / "expData"
 # load information of participants in excel format
@@ -482,6 +484,6 @@ pd.DataFrame(data).to_csv(
         #  "File Number",
     #  ],
 #  )
-titerMaster_df.to_csv("titerMaster.csv", index=False)
+titerMaster_df.to_csv(f"titerMaster_{folderName}.csv", index=False)
 print("done")
 #####End of loading the useful info

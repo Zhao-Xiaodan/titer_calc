@@ -168,8 +168,8 @@ def removeDataPointbyList_Xrange(pp_list, dataFrame, byColumn, Xrange):
     return dataFrame
 
 # ============ main ===============
-
-df = pd.read_csv('titerMaster.csv')
+folderName = "expData_backup Nov23"
+df = pd.read_csv(f'titerMaster_{folderName}.csv')
 #  df = pd.read_excel('readTiterMaster_18102022.xlsx', header=0, engine='openpyxl')
 
 # cap the max titer to be 25000
@@ -191,7 +191,6 @@ df = df.loc[~df['Participant'].isin(ppSelection)]
 ind_min = df[['Participant', 'Days from 2nd Jab']].groupby('Participant').idxmin()
 ind_min = ind_min.values.flatten()
 df_temp = df[['Test Date', 'Participant', 'Days from 2nd Jab']]
-breakpoint()
 df_temp.loc[ind_min, 'idxmin_mask'] = 1
 #  df_temp.to_csv("temp_freq_count.csv")
 df_temp.loc[(df_temp['idxmin_mask'] == 1) & (df_temp['Days from 2nd Jab'] < 5*7), 'idxmin_mask2'] = 1
@@ -238,7 +237,7 @@ df_wide = df.pivot(columns='Participant',
               ).swaplevel(0, 1, axis=1).sort_index(1)
 df_wide = df_wide.apply(lambda x: pd.Series(x.dropna().values))
 df_wide.to_csv("export_fullyVaccinated.csv")
-breakpoint()
+#  breakpoint()
 # =======================================================================
 
 dataFrame_fVaccinated, dataFrame_1stBoost, dataFrame_2ndBoost = mRNAvaccine(df)

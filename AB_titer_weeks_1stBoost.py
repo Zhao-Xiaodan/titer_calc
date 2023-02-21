@@ -178,8 +178,8 @@ def BSpline(dataFrame, byColumn):
 
 
 # ============ main ===============
-
-df = pd.read_csv('titerMaster.csv')
+folderName = "expData_backup Nov23"
+df = pd.read_csv(f'titerMaster_{folderName}.csv')
 #  df = pd.read_excel('readTiterMaster_06092022.xlsx', header=0, engine='openpyxl')
 
 # cap the max titer to be 25000
