@@ -191,6 +191,7 @@ df = df.loc[~df['Participant'].isin(ppSelection)]
 ind_min = df[['Participant', 'Days from 2nd Jab']].groupby('Participant').idxmin()
 ind_min = ind_min.values.flatten()
 df_temp = df[['Test Date', 'Participant', 'Days from 2nd Jab']]
+breakpoint()
 df_temp.loc[ind_min, 'idxmin_mask'] = 1
 #  df_temp.to_csv("temp_freq_count.csv")
 df_temp.loc[(df_temp['idxmin_mask'] == 1) & (df_temp['Days from 2nd Jab'] < 5*7), 'idxmin_mask2'] = 1

@@ -11,12 +11,21 @@ from pathlib import Path
 # from operator import itemgetter, attrgetter
 from datetime import datetime
 
+basepath = path.abspath('')
+pa = pd.read_excel(path.join(basepath, 'Participants.xlsx'),
+                  header=1,
+                  engine='openpyxl',
+                  )
+#  basepath = path.join(basepath, "expData")
+basepath = path.join(basepath, "expData_test")
+#  basepath = path.join(basepath, "expData_backup Nov23")
+#basepath = basepath / "expData"
 # load information of participants in excel format
-pa = pd.read_excel(
-    r"/Users/xiaodanzhao/myProject/AB Data analysis/Participants.xlsx",
-    header=1,
-    engine="openpyxl",
-)
+#pa = pd.read_excel(
+#    r"/Users/xiaodanzhao/myProject/AB Data analysis/Participants.xlsx",
+#    header=1,
+#    engine="openpyxl",
+#)
 
 pa = pa.loc[:, pa.notna().any(axis=0)]
 # Label rule: (1st and 2nd Jab) - fully vaccinated + 3rd Jab - 1st boost + 4th Jab -2nd boost
@@ -25,8 +34,7 @@ jabColNames = ["1st Jab", "2nd Jab", "3rd Jab", "4th Jab"]
 # load raw files
 rawData_ls = []  # file names of raw data in txt
 infoData_ls = []  # file names of info in excel
-basepath = Path(__file__).parent
-basepath = basepath / "expData"
+#basepath = Path(__file__).parent
 
 for i in listdir(basepath):
     if i.endswith(".txt"):
@@ -57,6 +65,7 @@ noOfRawFiles = len(rawData_ls)
 
 for i in range(noOfRawFiles):
     fileName = rawData_ls[i].strip(".txt")
+    print(fileName)
     if fileName != infoData_ls[i].strip(".xlsx"):
         print(
             "File Naming is wrong with either \n {0} or \n {1}".format(
@@ -102,7 +111,7 @@ for i in range(noOfRawFiles):
 
                 testInfo_split.append(testInfo_slice)
 
-            #  import pdb;pdb.set_trace()
+            #  breakpoint()
             # change Omicron RBD to BA1/2 for consistency and convert None to WT RBD
             for ii, Info in enumerate(testInfo_split):
                 if not any('CR3022' in item if item is not None else item for item in Info):

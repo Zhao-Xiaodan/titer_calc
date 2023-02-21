@@ -671,8 +671,8 @@ if False:
     plt.show()
 
 # -------- ttest and p-value for non-Infection withinGroup--------
-#  if True:
-if False:
+if True:
+#  if False:
     sns.set_theme(style='white')
     fig, ax = plt.subplots()
 
@@ -748,7 +748,8 @@ if False:
     fig, ax = plt.subplots()
 
     #  sns.set_theme(style='darkgrid')
-    order = ['2 dose', '2 dose + Infection', '3 dose', '3 dose + Infection']
+    order = ['3 dose', '3 dose + Infection']
+    #  order = ['2 dose', '2 dose + Infection', '3 dose', '3 dose + Infection']
     hue_order = ['WT RBD', 'BA1/2 RBD', 'BA4/5 RBD']
 
     ax = sns.boxplot(data=df, x="Vaccine Infection History", y="Titer",
@@ -767,11 +768,11 @@ if False:
         hue="Varian",
         order=order,
         box_pairs=[
-            (("2 dose", "WT RBD"), ("2 dose + Infection", "WT RBD")),
+            #  (("2 dose", "WT RBD"), ("2 dose + Infection", "WT RBD")),
             (("3 dose", "WT RBD"), ("3 dose + Infection", "WT RBD")),
-            (("2 dose", "BA1/2 RBD"), ("2 dose + Infection", "BA1/2 RBD")),
+            #  (("2 dose", "BA1/2 RBD"), ("2 dose + Infection", "BA1/2 RBD")),
             (("3 dose", "BA1/2 RBD"), ("3 dose + Infection", "BA1/2 RBD")),
-            (("2 dose", "BA4/5 RBD"), ("2 dose + Infection", "BA4/5 RBD")),
+            #  (("2 dose", "BA4/5 RBD"), ("2 dose + Infection", "BA4/5 RBD")),
             (("3 dose", "BA4/5 RBD"), ("3 dose + Infection", "BA4/5 RBD")),
         ],
         test="Mann-Whitney",
